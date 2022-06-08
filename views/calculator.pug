@@ -1,0 +1,23 @@
+html(lang="en")
+	head
+		title Calculadora Tabajara
+		meta(name="viewport", content="width=device-width, initial-scale=1.0")
+		style 
+			include style.css
+	body 
+		main 
+			h1 Calculadora Tabajara
+			section  
+				h3  #{equation}
+				h3  #{result}
+				form(action="/solve", method="post") 
+					input(type="text", placeholder="1+5-5/2*7115" name="conta")
+					input(type="submit", value="Compute")
+			section 
+				p.
+					You always wanted to acess a calculator, from any place or device, from the internet, but its too much schizofrenic to use Javascript on your browser?  
+				p.
+					Yours problems just went away. With the new Calculadora Tabajara you can solve your math calculations, on your browser, without using Javascript!
+			footer 
+				a(href="https://github.com/ussaohelcim/Calculadora-Tabajara") https://github.com/ussaohelcim/Calculadora-Tabajara
+				p Made by ussaohelcim.
