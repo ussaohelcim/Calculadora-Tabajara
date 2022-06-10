@@ -17,6 +17,22 @@ Your problems are over. With the new Calculadora Tabajara you can solve your mat
 
 - `npm run test`
 
+# Endpoint
+
+You can also use the `/api/calc` endpoint to solve your math equations.   
+Just make a `post` request with a form like this:  
+```json
+{
+	"equation":"10+10"
+}
+```
+Response:  
+```json
+{
+  "equation": "10+10",
+  "result": "20"
+}
+```
 # About
 
 Tabajara it's a fake company created by the Casseta & Planeta comedians where they try to sell useless stuff like an Umbrella wich create rains. 
