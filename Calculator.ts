@@ -228,8 +228,12 @@ export default class Calculator{
 	
 		for (let i = 0; i < text.length; i++) {
 			const e = text[i]
-	
-			if(operators.includes(e)){
+
+			if(!buffer && e === '-')
+			{
+				buffer += e
+			}
+			else if(operators.includes(e)){
 				if(buffer){
 					result.push(buffer)
 					buffer = ""
@@ -239,6 +243,7 @@ export default class Calculator{
 			else{
 				buffer += e
 			}
+
 		}
 	
 		if(buffer){
