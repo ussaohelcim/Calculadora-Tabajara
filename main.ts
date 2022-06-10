@@ -16,18 +16,28 @@ app.get('/',async (req,res)=>{
 })
 
 app.post('/solve',async (req,res)=>{
-	const equation = c.convertToEquation(req.body.equation)
-	const valid = c.validateInput(equation)
 
-	if(valid){
-		const npr = c.infixToPostfix(equation)
+	if(req.body.equation)
+	{
+		const equation = c.convertToEquation(req.body.equation)
+		const valid = c.validateInput(equation)
 
-		const result = c.solveRPN(npr)
+		if(valid){
+			const npr = c.infixToPostfix(equation)
 
-		res.render('calculator',{
-			equation:" Equation: "+ req.body.equation,
-			result: `result: ${result.toString()}`
-		})
+			const result = c.solveRPN(npr)
+
+			res.render('calculator',{
+				equation:" Equation: "+ req.body.equation,
+				result: `result: ${result.toString()}`
+			})
+		}
+		else{
+			res.render('calculator',{
+				equation:" Equation: "+ req.body.equation,
+				result: "Invalid input."
+			})
+		}
 	}
 	else{
 		res.render('calculator',{
@@ -35,6 +45,39 @@ app.post('/solve',async (req,res)=>{
 			result: "Invalid input."
 		})
 	}
+})
+
+app.post('/api/calc',async(req,res)=>{
+	
+	if(req.body.equation)
+	{
+		const equation = c.convertToEquation(req.body.equation)
+		const valid = c.validateInput(equation)
+
+		if(valid){
+			const npr = c.infixToPostfix(equation)
+
+			const result = c.solveRPN(npr)
+
+			res.json({
+				equation: req.body.equation,
+				result: result.toString()
+			})
+		}
+		else{
+			res.json({
+				equation: req.body.equation,
+				result: "Invalid input"
+			})
+		}
+	}
+	else{
+		res.json({
+			equation: req.body.equation,
+			result: "Invalid input"
+		})
+	}
+	
 })
 
 const server = http.createServer(app)
