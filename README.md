@@ -13,6 +13,10 @@ Your problems are over. With the new Calculadora Tabajara you can solve your mat
 - `npm run compile`
 - `npm run start`
 
+# Run tests
+
+- `npm run test`
+
 # About
 
 Tabajara it's a fake company created by the Casseta & Planeta comedians where they try to sell useless stuff like an Umbrella wich create rains. 
