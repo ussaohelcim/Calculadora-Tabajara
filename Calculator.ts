@@ -7,7 +7,8 @@ export default class Calculator{
 	 * Solve a RPN array. 
 	 * Example:
 	 * ```js
-	 * calculator.solveRPN(['5','5','+'])//10
+	 * calculator.solveRPN(['5','5','+'])
+	 * //10
 	 * ```
 	 * @param equation 
 	 * @returns The equation result.
@@ -30,34 +31,120 @@ export default class Calculator{
 
 				if(last && penultimate)
 				{
-					stack.push(this.operate(penultimate,operator,last))
+					let res = this.operate(penultimate,operator,last)
+					stack.push(res)
 				}
 			}
 		}
 
-		return stack[0]
-	}
-
-	validateInput(expression:string[]):boolean{
-
-		let res = false
-
-		for (let o = 0; o < expression.length; o++) {
-			const element = expression[o];
-
-			res = operators.includes(element) || !isNaN(Number(element))		
-		}
-
-		return res
-
+		return stack[0] || 0
 	}
 
 	/**
-	 * Convert a inFix math equation to a RPN array.
+	 * Check if is ['*','x','/','+','-','^']
+	 * @param token 
+	 * @returns 
+	 */
+	isMathOperator(token:string){
+		let ops = ['*','x','/','+','-','^']
+		return ops.includes(token)
+	}
+
+	validateInput(expression:string[]):boolean{
+		let valid = true
+		// let error = ""
+		
+		for (let index = 0; index < expression.length; index++) {
+			const token = expression[index];
+
+			// [ operator ]
+			if(expression.length === 1 && operators.includes(token))
+			{
+				valid = false
+				// error = `operator alone [ ${token}]`
+			}
+
+			if(index > 0)
+			{
+				let last = expression[index - 1]
+				
+				// [* , number , number
+				if(this.isNumber(last) && this.isNumber(token))
+				{
+					valid = false
+					// error = `number after number [${last}, ${token}]`
+				}		
+				// [ * , operator ,	operator
+				if(this.isMathOperator(last) && this.isMathOperator(token))
+				{
+					valid = false
+					// error = `operator after operator [${last}, ${token}]`
+				}
+				// [*, ( ,	operator 
+				if(last === '(' && this.isMathOperator(token))
+				{
+					valid = false
+					// error = `operator after ( [${last}, ${token}]`
+				}
+				// [ * , ) , number
+				if(last === ')' && this.isNumber(token) )
+				{
+					valid = false
+					// error = `) before number [${last}, ${token}]`
+				}
+				// [ * , number , (
+				if(this.isNumber(last) && token === '(')
+				{
+					valid = false
+					// error = `number before ( [${last}, ${token}]`
+				}
+			}
+
+			// [ invalid ]
+			if(!this.validCharacter(token))
+			{
+				valid = false
+				// error = `character not valid ${token}`
+			}
+
+			// [ * , ( ]
+			// [ * , operator ]
+			if(index === expression.length - 1)
+			{
+				if(this.isMathOperator(token) || token === '(')
+				{
+					valid = false
+					// error = `operator alone at the end ${token}`
+				}
+			}
+
+			if(!valid)
+			{
+				// console.log(error)
+				break
+			}
+		}
+	
+		return valid
+	}
+
+	isNumber(number:string):boolean{
+		return !isNaN(Number(number))
+	}
+
+	validCharacter(character:string):boolean{
+		let isOperator = operators.includes(character)
+		let isNum = this.isNumber(character)
+
+		return (isOperator || isNum)
+	}
+
+	/**
+	 * Convert an inFix math equation array to a RPN array.
 	 * ```js
 	 * //example
-	 * calculator.convertToRPN("5+5")
-	 * //`[5,5,+]`
+	 * calculator.infixToPostfix(["5","+","5"])
+	 * //['5','5','+']
 	 * ```
 	 * @param input 
 	 */
@@ -66,18 +153,31 @@ export default class Calculator{
 		let stack:string[] = []
 
 		for (let i = 0; i < input.length; i++) {
-			const x = input[i];
-			
-			if(operators.includes(x)){
+			const token = input[i];
 
-				while(this.precedence(x) <= this.precedence(stack[stack.length-1])){
+			if(token === '(')
+			{
+				stack.push(token)
+			}
+			else if(operators.includes(token)){				
+				while(this.precedence(token) <= this.precedence(stack[stack.length-1])){
 					output.push(stack.pop()!)
 				}
-				stack.push(x)
+
+				if(stack.includes('(') && token === ')'){
+					while(stack[stack.length-1] !== '('){
+						let top = stack.pop()!
+						if(top !== '(') output.push(top)
+					}
+					let trash = stack.pop()!
+				}
+				else{
+					stack.push(token)
+				}
 				
 			}
-			else if(Number(x)){
-				output.push(x)
+			else if(Number(token)){
+				output.push(token)
 			}
 		}
 
@@ -89,8 +189,10 @@ export default class Calculator{
 		return output
 	}
 
-	operate(a:number,operador:string,b:number):number{
-		switch (operador) {
+	operate(a:number,operator:string,b:number):number{
+		switch (operator) {
+			case '^':
+				return Math.pow(a,b)
 			case '+':
 				return a + b		
 			case '*':
@@ -103,6 +205,7 @@ export default class Calculator{
 			default:
 				break;
 		}
+
 		return 0
 	}
 
@@ -117,6 +220,8 @@ export default class Calculator{
 	 * @returns an infix equation array.
 	 */
 	convertToEquation(text:string): string[]{
+		//TODO handle negative numbers
+
 		const result = []
 
 		let buffer = ""
@@ -146,14 +251,12 @@ export default class Calculator{
 
 	precedence(operator:string):boolean{
 		let order:any = {
-			["("]:5,
-			[')']:5,
-			['^']:4,
-			['*']:3,
-			['x']:3,
+			['^']:3,
+			['*']:2,
+			['x']:2,
 			['/']:2,
 			['+']:1,
-			['-']:0
+			['-']:1
 		}
 		return order[operator]
 	}
