@@ -120,7 +120,49 @@ describe('math operations',()=>{
 })
 
 describe('negative numbers',()=>{
+	test('[-,5] == [ -5 ]',()=>{
+		let input = '-5'
+		expect(
+			c.convertToEquation(input)
+		)
+		.toEqual(['-5'])
+	})
 
+	test('[-,5,+,1] == -4',()=>{
+		let input = "-5+1"
+		let infix = c.convertToEquation(input)
+		expect(
+			c.solveRPN(c.infixToPostfix(infix)) 
+		)
+		.toEqual(-4)
+	})
+
+	test('-1-1 == -2',()=>{
+		let input = "-1-1"
+		let infix = c.convertToEquation(input)
+		expect(
+			c.solveRPN(c.infixToPostfix(infix)) 
+		)
+		.toEqual(-2)
+	})
+
+	test('(-1)+(-1) == -2',()=>{
+		let input = "(-1)+(-1)"
+		let infix = c.convertToEquation(input)
+		expect(
+			c.solveRPN(c.infixToPostfix(infix)) 
+		)
+		.toEqual(-2)
+	})
+
+	test(' (-5)+20*5-5 == 90',()=>{
+		let input = "(-5)+20*5-5"
+		let infix = c.convertToEquation(input)
+		expect(
+			c.solveRPN(c.infixToPostfix(infix)) 
+		)
+		.toEqual(90)
+	})
 })
 
 describe('infix to postfix',()=>{
