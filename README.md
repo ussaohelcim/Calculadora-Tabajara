@@ -35,4 +35,4 @@ Response:
 ```
 # About
 
-Tabajara it's a fake company created by the Casseta & Planeta comedians where they try to sell useless stuff like an Umbrella wich create rains. 
+Tabajara it's a fake company created by the Casseta & Planeta comedians where they try to sell useless stuff like an Umbrella which create rains. 
